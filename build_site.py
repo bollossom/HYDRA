@@ -1,8 +1,10 @@
-"""Restore the exact, checksum-verified static website for GitHub Pages."""
+"""Restore the verified website, then install the visitor-statistics overlay."""
 import hashlib
 import json
 import zipfile
 from pathlib import Path
+
+from visitor_stats import install_visitor_stats
 
 root = Path(__file__).resolve().parent
 manifest = json.loads((root / 'site-manifest.json').read_text())
@@ -21,4 +23,5 @@ for filename, expected in manifest['files'].items():
 assert (out / 'index.html').exists()
 assert (out / 'training-logs/index.html').exists()
 assert len(list((out / 'training-logs/images').rglob('*.png'))) == 322
-print(f"Verified {len(manifest['files'])} site files; restored project page and training logs.")
+install_visitor_stats(root, out)
+print(f"Verified {len(manifest['files'])} bundled files; restored both pages and installed visitor statistics.")
