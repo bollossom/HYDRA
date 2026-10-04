@@ -1,0 +1,126 @@
+.hydra-visitors {
+  --visitor-accent: #285e91;
+  --visitor-line: #dce7f1;
+  --visitor-pale: #f2f7fc;
+  padding: 36px 0;
+  scroll-margin-top: 72px;
+}
+.hydra-visitors[data-theme="archive"] {
+  --visitor-accent: #7250bb;
+  --visitor-line: #e0e5e9;
+  --visitor-pale: #f7f4fc;
+}
+.hydra-visitors-inner { width: 100%; }
+.hydra-visitors .hydra-visitors-title {
+  margin: 0;
+  color: var(--visitor-accent);
+  font-size: 25px;
+  font-weight: 650;
+  letter-spacing: -.015em;
+  text-align: center;
+  line-height: 1.35;
+}
+.hydra-visitors-intro {
+  margin: 10px 0 25px;
+  color: #68747f;
+  font-size: 14px;
+  text-align: center;
+}
+.hydra-visitors-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 18px;
+  align-items: stretch;
+}
+.hydra-visitors .hydra-visitors-card {
+  min-width: 0;
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--visitor-line);
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.hydra-visitors .hydra-visitors-card-title {
+  margin: 0 0 15px;
+  color: var(--visitor-accent);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+  text-align: left;
+}
+.hydra-visitors-image-link { display: block; }
+.hydra-visitors-image-link:focus-visible,
+.hydra-visitors a:focus-visible {
+  outline: 2px solid var(--visitor-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.hydra-visitors .hydra-visitors-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+}
+.hydra-visitors [hidden] { display: none !important; }
+.hydra-visitors-status {
+  display: grid;
+  place-items: center;
+  min-height: 235px;
+  margin: 0;
+  padding: 25px;
+  border-radius: 5px;
+  background: var(--visitor-pale);
+  color: #68747f;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+.hydra-visitors-countries .hydra-visitors-status { min-height: 150px; }
+.hydra-visitors-card-note {
+  margin: auto 0 0;
+  padding-top: 14px;
+  color: #75818a;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.hydra-visitors-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: 18px;
+}
+.hydra-visitors-note {
+  max-width: 680px;
+  margin: 0;
+  color: #75818a;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.hydra-visitors .hydra-visitors-report {
+  flex: 0 0 auto;
+  color: var(--visitor-accent);
+  font-size: 12px;
+  font-weight: 650;
+}
+.hydra-visitors-credit {
+  margin: 12px 0 0;
+  color: #84909b;
+  font-size: 11px;
+}
+.hydra-visitors-credit a { color: inherit; }
+.hydra-visitors-noscript { color: #75818a; font-size: 13px; }
+@media (max-width: 760px) {
+  .hydra-visitors { padding: 30px 0; }
+  .hydra-visitors-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .hydra-visitors .hydra-visitors-card { padding: 15px; }
+  .hydra-visitors .hydra-visitors-title { font-size: 22px; }
+  .hydra-visitors-bottom { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .hydra-visitors-status { min-height: 180px; }
+}
+@media print { .hydra-visitors { display: none; } }
