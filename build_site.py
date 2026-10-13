@@ -23,5 +23,13 @@ for filename, expected in manifest['files'].items():
 assert (out / 'index.html').exists()
 assert (out / 'training-logs/index.html').exists()
 assert len(list((out / 'training-logs/images').rglob('*.png'))) == 322
+# Publish the model download link after verifying the archived website.
+page = out / 'index.html'
+html = page.read_text(encoding='utf-8')
+placeholder = '<span class="pill pending" title="Model release is being prepared">🤗 &nbsp;Models · coming soon</span>'
+models_link = '<a class="pill" href="https://huggingface.co/Xuerui123/HYdra" target="_blank" rel="noopener noreferrer">🤗 &nbsp;Models</a>'
+assert html.count(placeholder) == 1, 'Expected one Models placeholder'
+page.write_text(html.replace(placeholder, models_link), encoding='utf-8')
+
 install_visitor_stats(root, out)
 print(f"Verified {len(manifest['files'])} bundled files; restored both pages and installed visitor statistics.")
