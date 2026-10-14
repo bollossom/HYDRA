@@ -32,4 +32,18 @@ assert html.count(placeholder) == 1, 'Expected one Models placeholder'
 page.write_text(html.replace(placeholder, models_link), encoding='utf-8')
 
 install_visitor_stats(root, out)
+
+# Add paper access and citation after restoring and verifying the archived site.
+html = page.read_text(encoding='utf-8')
+code_link = '<a class="pill" href="https://github.com/Tencent-Hunyuan/HYdra" target="_blank" rel="noopener">⌘ &nbsp;Code</a>'
+paper_link = '<a class="pill" href="https://arxiv.org/abs/2603.15228" target="_blank" rel="noopener noreferrer">📄 &nbsp;Paper</a>'
+assert html.count(code_link) == 1, 'Expected one Code button'
+assert html.count('</main>') == 1, 'Expected one homepage main element'
+assert 'id="citation"' not in html, 'Citation already present in archive'
+citation_styles = "\n    #citation { scroll-margin-top:70px; }\n    #citation .citation-meta { margin:0 auto 12px; color:var(--muted); font-size:15px; text-align:center; }\n    #citation pre { max-width:1000px; margin:22px auto 0; padding:22px; border:1px solid var(--line); border-radius:8px; background:var(--pale-2); white-space:pre-wrap; overflow-wrap:anywhere; }\n    #citation code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:13px; line-height:1.7; }\n"
+citation_section = "\n<section id=\"citation\" aria-labelledby=\"citation-title\">\n  <div class=\"container\">\n    <h2 class=\"section-title\" id=\"citation-title\">Citation</h2>\n    <p class=\"citation-meta\">Read the paper: <a href=\"https://arxiv.org/abs/2603.15228\" target=\"_blank\" rel=\"noopener noreferrer\">arXiv:2603.15228</a></p>\n    <p class=\"citation-meta\">Please cite HYDRA using the following BibTeX entry.</p>\n    <pre><code>@article{qiu2026hydra,\n  title={{HYDRA}: Representation Harmonized Tokenization for Multimodal Generation and Understanding},\n  author={Qiu, Xuerui and Cui, Yutao and Zhang, Guozhen and Li, Junzhe and Zhao, Yaqi and Zhang, Xiao and Li, Yang and Liu, Songtao and Yang, Miles and Shi, Yu and Zhong, Zhao and Bo, Liefeng},\n  journal={arXiv preprint arXiv:2603.15228},\n  year={2026}\n}</code></pre>\n  </div>\n</section>\n"
+html = html.replace(code_link, paper_link + '\n        ' + code_link, 1)
+html = html.replace('</style>', citation_styles + '\n</style>', 1)
+html = html.replace('</main>', citation_section + '\n</main>', 1)
+page.write_text(html, encoding='utf-8')
 print(f"Verified {len(manifest['files'])} bundled files; restored both pages and installed visitor statistics.")
