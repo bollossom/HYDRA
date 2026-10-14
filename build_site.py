@@ -45,5 +45,15 @@ citation_section = "\n<section id=\"citation\" aria-labelledby=\"citation-title\
 html = html.replace(code_link, paper_link + '\n        ' + code_link, 1)
 html = html.replace('</style>', citation_styles + '\n</style>', 1)
 html = html.replace('</main>', citation_section + '\n</main>', 1)
+
+# Highlight the conference acceptance below the project title.
+conference_title = "<h1>HYDRA: Representation Harmonized Tokenization<br>for Multimodal Generation and Understanding</h1>"
+conference_badge = "<div class=\"conference-tag\"><span>NeurIPS 2026</span></div>"
+conference_styles = "\n    .conference-tag { margin:18px auto 0; }\n    .conference-tag span { display:inline-block; padding:6px 16px; border:1px solid #bdd3e7; border-radius:999px; color:var(--blue-deep); background:var(--pale); font-size:15px; font-weight:750; letter-spacing:.02em; }\n"
+assert html.count(conference_title) == 1, "Expected one project title"
+assert html.count("</style>") == 1, "Expected one homepage style block"
+assert 'class="conference-tag"' not in html, "Conference tag already present"
+html = html.replace(conference_title, conference_title + "\n      " + conference_badge, 1)
+html = html.replace("</style>", conference_styles + "\n</style>", 1)
 page.write_text(html, encoding='utf-8')
 print(f"Verified {len(manifest['files'])} bundled files; restored both pages and installed visitor statistics.")
