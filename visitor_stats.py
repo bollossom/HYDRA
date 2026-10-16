@@ -64,8 +64,7 @@ def _render_section(template, config, theme, container_class):
     values = {
         "__CONTAINER_CLASS__": container_class,
         "__THEME__": theme,
-        "__MAP_URL__": f"{base}/map/{counter}/size_l/txt_285E91/border_FFFFFF/pageviews_0/viewers_0/flags_1/",
-        "__COUNTRIES_URL__": f"{base}/count2/{counter}/bg_FFFFFF/txt_285E91/border_FFFFFF/columns_2/maxflags_20/viewers_0/labels_1/pageviews_0/flags_1/percent_0/",
+        "__TOTAL_URL__": f"{base}/mini/{counter}/bg_FFFFFF/txt_285E91/border_FFFFFF/flags_0/",
         "__STATS_URL__": config["statistics_url"],
         "__LIVE_HOST__": config["live_host"],
         "__LIVE_PATH__": config["live_path"],

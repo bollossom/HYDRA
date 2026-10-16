@@ -15,12 +15,12 @@
 
       // Ordinary local previews and offline archive use must not add visits.
       if (!live && !preview) {
-        status.textContent = 'Open the live website to view visitor statistics.';
+        status.textContent = 'Open the live website to view total page views.';
         return;
       }
 
       const slowLoad = window.setTimeout(() => {
-        status.textContent = 'Statistics are taking longer to load. Open the full report below.';
+        status.textContent = 'Page views are taking longer to load. Open the full report below.';
       }, 15000);
 
       image.addEventListener('load', () => {
@@ -33,10 +33,10 @@
         window.clearTimeout(slowLoad);
         image.hidden = true;
         status.hidden = false;
-        status.textContent = 'Visitor statistics are temporarily unavailable. Open the full report below.';
+        status.textContent = 'Page views are temporarily unavailable. Open the full report below.';
       }, { once: true });
 
-      // Both widgets use one counter. They load on page opening, even below the fold.
+      // One widget uses the shared counter and loads once on page opening.
       image.src = image.dataset.visitorSrc;
     });
   });

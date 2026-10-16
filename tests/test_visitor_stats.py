@@ -20,8 +20,12 @@ CONFIG = {
     "live_host": "bollossom.github.io",
     "live_path": "/HYDRA/",
 }
-TEMPLATE = '''<section id="hydra-visitors" data-theme="__THEME__" data-live-host="__LIVE_HOST__" data-live-path="__LIVE_PATH__"><div class="__CONTAINER_CLASS__"><a href="__STATS_URL__"><img data-src="__MAP_URL__" alt="Visitor map"><img data-src="__COUNTRIES_URL__" alt="Countries"></a></div></section>'''
-PROJECT = "<!doctype html><html><head><title>HYDRA</title></head><body><main><section>Research</section></main></body></html>"
+TEMPLATE = (Path(__file__).resolve().parents[1] / "visitor-stats/section.html").read_text()
+PROJECT = '''<!doctype html><html><head><title>HYDRA</title><style></style></head><body><main>
+<h1>HYDRA: Representation Harmonized Tokenization<br>for Multimodal Generation and Understanding</h1>
+<span class="pill pending" title="Model release is being prepared">🤗 &nbsp;Models · coming soon</span>
+<a class="pill" href="https://github.com/Tencent-Hunyuan/HYdra" target="_blank" rel="noopener">⌘ &nbsp;Code</a>
+<section>Research</section></main></body></html>'''
 ARCHIVE = '<!doctype html><html><head><title>Archive</title></head><body><main><div id="stages"></div><p class="bottom">Fully offline</p></main></body></html>'
 
 
@@ -50,21 +54,27 @@ class VisitorStatsTests(unittest.TestCase):
             ("training-logs/index.html", "../assets/", "archive", "hydra-visitors-inner"),
         ]:
             page = (self.out / relative).read_text()
-            self.assertEqual(page.count('id="hydra-visitors"'), 1)
+            self.assertEqual(page.count('id="visitors"'), 1)
             self.assertEqual(page.count(f'href="{prefix}visitor-stats.css"'), 1)
             self.assertEqual(page.count(f'<script defer src="{prefix}visitor-stats.js"></script>'), 1)
             self.assertIn(f'data-theme="{theme}"', page)
             self.assertIn(f'class="{container}"', page)
-            self.assertIn('data-live-host="bollossom.github.io"', page)
-            self.assertIn('data-live-path="/HYDRA/"', page)
+            self.assertIn('data-visitor-host="bollossom.github.io"', page)
+            self.assertIn('data-visitor-path="/HYDRA/"', page)
             self.assertIn('href="https://info.flagcounter.com/FeUW"', page)
-            self.assertIn("https://s01.flagcounter.com/map/FeUW/size_l/txt_285E91/border_FFFFFF/pageviews_0/viewers_0/flags_1/", page)
-            self.assertIn("https://s01.flagcounter.com/count2/FeUW/bg_FFFFFF/txt_285E91/border_FFFFFF/columns_2/maxflags_20/viewers_0/labels_1/pageviews_0/flags_1/percent_0/", page)
-            self.assertNotIn("__MAP_URL__", page)
-            self.assertLess(page.index('id="hydra-visitors"'), page.index("</main>"))
+            self.assertIn("https://s01.flagcounter.com/mini/FeUW/bg_FFFFFF/txt_285E91/border_FFFFFF/flags_0/", page)
+            self.assertEqual(page.count('data-visitor-src="'), 1)
+            self.assertEqual(page.count('<figure class="hydra-visitors-card">'), 1)
+            self.assertIn("Total page views", page)
+            self.assertIn("Counts page views, not unique visitors.", page)
+            self.assertIn('href="https://www.flagcounter.com/"', page)
+            self.assertNotIn("__TOTAL_URL__", page)
+            self.assertNotIn("/map/FeUW/", page)
+            self.assertNotIn("/count2/FeUW/", page)
+            self.assertLess(page.index('id="visitors"'), page.index("</main>"))
             self.assertLess(page.index(f'href="{prefix}visitor-stats.css"'), page.index("</head>"))
             if theme == "archive":
-                self.assertLess(page.index('id="hydra-visitors"'), page.index('<p class="bottom">'))
+                self.assertLess(page.index('id="visitors"'), page.index('<p class="bottom">'))
                 self.assertIn("Offline training data", page)
                 self.assertNotIn("Fully offline", page)
         for name in ("visitor-stats.css", "visitor-stats.js"):
