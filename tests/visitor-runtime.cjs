@@ -7,15 +7,14 @@ const test = require('node:test');
 const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'visitor-stats', 'visitor-stats.js'), 'utf8');
-const mapUrl = 'https://s01.flagcounter.com/map/FeUW/size_l/txt_285E91/border_FFFFFF/pageviews_0/viewers_0/flags_1/';
-const countriesUrl = 'https://s01.flagcounter.com/count2/FeUW/bg_FFFFFF/txt_285E91/border_FFFFFF/columns_2/maxflags_20/viewers_0/labels_1/pageviews_0/flags_1/percent_0/';
-const widgetUrls = [mapUrl, countriesUrl];
+const totalUrl = 'https://s01.flagcounter.com/mini/FeUW/bg_FFFFFF/txt_285E91/border_FFFFFF/flags_0/';
+const widgetUrls = [totalUrl];
 
 function makeRuntime({ hostname = 'localhost', pathname = '/index.html', search = '' } = {}) {
   const requests = [];
   const timers = new Map();
   let nextTimerId = 0;
-  const statuses = widgetUrls.map(() => ({ textContent: 'Loading visitor statistics…', hidden: false }));
+  const statuses = widgetUrls.map(() => ({ textContent: 'Loading total page views…', hidden: false }));
   const images = widgetUrls.map((url, index) => {
     const listeners = new Map();
     let src;
@@ -108,12 +107,12 @@ test('local and offline previews do not request tracking images', () => {
   }
 });
 
-test('the exact production host and project path start both real widgets immediately', () => {
-  for (const pathname of ['/HYDRA/', '/HYDRA/index.html', '/HYDRA/archive/run.html']) {
+test('the exact production host and project path start one total-page-views widget immediately', () => {
+  for (const pathname of ['/HYDRA/', '/HYDRA/index.html', '/HYDRA/training-logs/']) {
     const runtime = makeRuntime({ hostname: 'bollossom.github.io', pathname });
     runtime.run();
     assert.deepEqual(runtime.requests, widgetUrls);
-    assert.equal(runtime.timers.size, 2);
+    assert.equal(runtime.timers.size, 1);
     runtime.images.forEach(image => assert.equal(image.hidden, true));
   }
 });
@@ -171,19 +170,19 @@ test('failed widget loads display a report fallback and clear loading timeouts',
   runtime.statuses.forEach(status => assert.match(status.textContent, /temporarily unavailable/));
 });
 
-test('slow loads show a useful status and can still finish independently', () => {
-  const runtime = makeLiveRuntime();
-  runtime.run();
-  for (const timer of runtime.timers.values()) assert.equal(timer.delay, 15000);
-  runtime.fireTimers();
-  runtime.statuses.forEach(status => assert.match(status.textContent, /longer to load.*full report/));
-  runtime.images[0].dispatch('load');
-  runtime.images[1].dispatch('error');
-  assert.equal(runtime.images[0].hidden, false);
-  assert.equal(runtime.statuses[0].hidden, true);
-  assert.equal(runtime.images[1].hidden, true);
-  assert.match(runtime.statuses[1].textContent, /temporarily unavailable/);
-  assert.equal(runtime.timers.size, 0);
+test('slow loads show a useful status and can still complete or fail', () => {
+  for (const result of ['load', 'error']) {
+    const runtime = makeLiveRuntime();
+    runtime.run();
+    for (const timer of runtime.timers.values()) assert.equal(timer.delay, 15000);
+    runtime.fireTimers();
+    assert.match(runtime.statuses[0].textContent, /longer to load.*full report/);
+    runtime.images[0].dispatch(result);
+    assert.equal(runtime.images[0].hidden, result === 'error');
+    assert.equal(runtime.statuses[0].hidden, result === 'load');
+    if (result === 'error') assert.match(runtime.statuses[0].textContent, /temporarily unavailable/);
+    assert.equal(runtime.timers.size, 0);
+  }
 });
 
 test('reinvoking the script does not request widgets or schedule timers twice', () => {
@@ -191,7 +190,7 @@ test('reinvoking the script does not request widgets or schedule timers twice', 
   runtime.run();
   runtime.run();
   assert.deepEqual(runtime.requests, widgetUrls);
-  assert.equal(runtime.timers.size, 2);
+  assert.equal(runtime.timers.size, 1);
   runtime.images.forEach(image => image.dispatch('load'));
   runtime.run();
   assert.deepEqual(runtime.requests, widgetUrls);
